@@ -3,7 +3,7 @@
 #include "ndis/nbl.h"
 #include <fwpsk.h>
 #include <fwpmk.h>
-#include "filterArray.h"
+#include "FilterIdContainer.h"
 
 //structs
 typedef struct Resources
@@ -11,9 +11,8 @@ typedef struct Resources
 	UINT32 calloutIdUDP;
 	UINT32 calloutIdTCP;
 	HANDLE hEngine;
-	idArray filterArr;
-
+	PDEVICE_OBJECT filterDeviceObject;
 } Resources;
 
 //global vars
-Resources res;
+extern Resources res;

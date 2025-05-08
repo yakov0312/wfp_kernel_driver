@@ -19,21 +19,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="network.inf">
+    <Inf Include="wfpFilter.inf">
       <Filter>Driver Files</Filter>
     </Inf>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Driver.h">
+    <ClInclude Include="FilterIdContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Device.h">
+    <ClInclude Include="Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="filterArray.h">
+    <ClInclude Include="Setup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resources.h">
+    <ClInclude Include="Filtering.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,10 +41,16 @@
     <ClCompile Include="Driver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Device.c">
+    <ClCompile Include="FilterIdContainer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="filterArray.c">
+    <ClCompile Include="Filtering.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Setup.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
