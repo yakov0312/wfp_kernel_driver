@@ -314,7 +314,7 @@ VOID addFilter(const PFILTER_SETTINGS filterS, const PFILTER_CONTEXT context)
 	}
 	UINT64 id = 0;
 	FwpmFilterAdd0(res.hEngine, &filter, NULL, &id);
-	List_addId(id);
+	List_addId(id, filterS->filterName);
 
 	for (int j = 0; j < i; j++)
 	{

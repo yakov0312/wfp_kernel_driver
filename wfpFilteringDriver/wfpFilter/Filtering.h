@@ -32,6 +32,7 @@ EXTERN_C const GUID sublayerGuidU;
 //struct that a program send to the driver with some settings about the fitler
 typedef struct _FILTER_SETTINGS
 {
+    char filterName[FILTER_NAME_SIZE]; //no need for the \0 here
     UINT16 dstPort;
     UINT32 srcIpAddr;
     UINT32 dstIpAddr;
