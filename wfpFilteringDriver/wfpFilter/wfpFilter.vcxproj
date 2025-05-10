@@ -119,15 +119,18 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DeviceControlConsts.h" />
     <ClInclude Include="FilterIdContainer.h" />
-    <ClInclude Include="Filtering.h" />
+    <ClInclude Include="DeviceControl.h" />
+    <ClInclude Include="PacketProcess.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Setup.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Driver.c" />
     <ClCompile Include="FilterIdContainer.c" />
-    <ClCompile Include="Filtering.c" />
+    <ClCompile Include="DeviceControl.c" />
+    <ClCompile Include="PacketProcess.c" />
     <ClCompile Include="Resources.c" />
     <ClCompile Include="Setup.c" />
   </ItemGroup>

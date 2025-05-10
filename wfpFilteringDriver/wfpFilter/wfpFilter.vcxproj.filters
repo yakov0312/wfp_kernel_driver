@@ -33,7 +33,13 @@
     <ClInclude Include="Setup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Filtering.h">
+    <ClInclude Include="DeviceControl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketProcess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceControlConsts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,13 +50,16 @@
     <ClCompile Include="FilterIdContainer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Filtering.c">
+    <ClCompile Include="DeviceControl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resources.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Setup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketProcess.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

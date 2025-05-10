@@ -32,8 +32,8 @@ int List_addId(const UINT64 id, const char* name)
 		return - 1;
 	}
 	newId->id = id;
-	strncpy(newId->name, name, FILTER_NAME_SIZE - 1);
-	newId->name[FILTER_NAME_SIZE - 1] = '\0';
+	strncpy(newId->name, name, FILTER_NAME_SIZE);
+	newId->name[FILTER_NAME_SIZE] = '\0'; //ensure there is a \0
 	cur->next = newId;
 	return 0;
 }
