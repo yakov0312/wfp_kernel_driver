@@ -160,7 +160,7 @@ static VOID addFilter(const PFILTER_SETTINGS filterS, const PFILTER_CONTEXT cont
 		conditions[i].fieldKey = FWPM_CONDITION_IP_PROTOCOL;
 		conditions[i].matchType = FWP_MATCH_EQUAL;
 		conditions[i].conditionValue.type = FWP_UINT8;
-		conditions[i].conditionValue.uint16 = IPPROTO_UDP;
+		conditions[i].conditionValue.uint8 = IPPROTO_UDP;
 		i++;
 	}
 
@@ -173,6 +173,7 @@ static VOID addFilter(const PFILTER_SETTINGS filterS, const PFILTER_CONTEXT cont
 	filter.weight.type = FWP_EMPTY; //the sublayer has max weight so it does not really matter
 	filter.layerKey = (filterS->isUDP) ? FWPM_LAYER_DATAGRAM_DATA_V4 : FWPM_LAYER_OUTBOUND_TRANSPORT_V4;
 	filter.displayData.name = filterS->filterName;
+
 	UINT64 id = 0;
 	NTSTATUS status = FwpmFilterAdd0(res.hEngine, &filter, NULL, &id);
 	if (NT_SUCCESS(status))
@@ -180,7 +181,7 @@ static VOID addFilter(const PFILTER_SETTINGS filterS, const PFILTER_CONTEXT cont
 		List_addId(id, filterS->filterName);
 	}
 
-	/*for (int j = 0; j < i; j++)
+	/*for (int j = 0; j < i; j++) * not sure if it is needed
 	{
 		if (conditions[j].conditionValue.type == FWP_V4_ADDR_MASK &&
 			conditions[j].conditionValue.v4AddrMask != NULL)
@@ -188,5 +189,4 @@ static VOID addFilter(const PFILTER_SETTINGS filterS, const PFILTER_CONTEXT cont
 			ExFreePool2(conditions[j].conditionValue.v4AddrMask, 'addr', NULL, 0);
 		}
 	}*/
-
 }
