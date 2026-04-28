@@ -19,9 +19,10 @@ NTSTATUS WfpInit(PDRIVER_OBJECT driverObject)
 	UNICODE_STRING deviceName = RTL_CONSTANT_STRING(DEVICE_NAME);
 	UNICODE_STRING symName = RTL_CONSTANT_STRING(SYM_NAME);
 
-	driverObject->MajorFunction[IRP_MJ_CREATE] = networkCreateC;//does not have to do anything just be defined
+	driverObject->MajorFunction[IRP_MJ_CREATE] = networkCreateC; // Does not have to do anything just be defined
 	driverObject->MajorFunction[IRP_MJ_CLOSE] = networkCloseC;
 	driverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = networkDeviceControl;
+
 	// Create a device object (used in the callout registration)
 	NTSTATUS status = IoCreateDevice(driverObject, 0, &deviceName, FILE_DEVICE_UNKNOWN, 0, FALSE, &res.filterDeviceObject);
 	if (!NT_SUCCESS(status))
@@ -53,73 +54,6 @@ NTSTATUS WfpInit(PDRIVER_OBJECT driverObject)
 	}
 
 	return status;
-}
-
-// * public
-VOID WfpCleanup()
-{
-	TermCalloutData();
-	TermWfpEngine();
-	TermFilterDeviceObject();
-}
-
-// * private 
-static NTSTATUS CalloutRegister() {
-
-	// https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/fwpsk/ns-fwpsk-fwps_callout0_
-	FWPS_CALLOUT calloutU = {
-		.calloutKey = packetUDP,		// Unique GUID that identifies the callout
-		.flags = 0,					// None
-		.classifyFn = processPacketUDP,		// Callout function used to process network data
-		.notifyFn = CalloutNotify,		// Callout function used to receive notifications from the filter engine, not needed in our case (but needs to be defined)
-		.flowDeleteFn = NULL,// Callout function used to process terminated data, not needed in our case (does't need to be defined)
-	};
-	// https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/fwpsk/nf-fwpsk-fwpscalloutregister0
-	NTSTATUS result = FwpsCalloutRegister(res.filterDeviceObject, &calloutU, &res.calloutIdUDP);
-	if (!NT_SUCCESS(result))
-	{
-		return result;
-	}
-
-	FWPS_CALLOUT calloutT = {
-		.calloutKey = packetTCP,		// Unique GUID that identifies the callout
-		.flags = 0,					// None
-		.classifyFn = processPacketTCP,		// Callout function used to process network data
-		.notifyFn = CalloutNotify,		// Callout function used to receive notifications from the filter engine, not needed in our case (but needs to be defined)
-		.flowDeleteFn = NULL				// Callout function used to process terminated data, not needed in our case (does't need to be defined)
-	};
-	return FwpsCalloutRegister(res.filterDeviceObject, &calloutT, &res.calloutIdTCP);
-}
-
-// * private
-static NTSTATUS CalloutAdd() {
-
-	// https://learn.microsoft.com/en-us/windows/win32/api/fwpmtypes/ns-fwpmtypes-fwpm_callout0
-	FWPM_CALLOUT calloutU = {
-		.flags = 0,								 // None
-		.displayData.name = L"udpCall",
-		.displayData.description = L"filterUdp",
-		.calloutKey = packetUDP,					 // Unique GUID that identifies the callout, should be the same as the registered FWPS_CALLOUT GUID
-		.applicableLayer = FWPM_LAYER_DATAGRAM_DATA_V4// https://learn.microsoft.com/en-us/windows/win32/fwp/management-filtering-layer-identifiers-
-	};
-
-	// https://learn.microsoft.com/en-us/windows/win32/api/fwpmu/nf-fwpmu-fwpmcalloutadd0
-	NTSTATUS result = FwpmCalloutAdd(res.hEngine, &calloutU, NULL, &res.calloutIdUDP);
-	if (!NT_SUCCESS(result))
-	{
-		return result;
-	}
-
-	FWPM_CALLOUT calloutT =
-	{
-		.flags = 0,
-		.displayData.name = L"tcpCall",
-		.displayData.description = L"filterTcp",
-		.calloutKey = packetTCP,
-		.applicableLayer = FWPM_LAYER_STREAM_V4
-	};
-
-	return FwpmCalloutAdd(res.hEngine, &calloutT, NULL, &res.calloutIdTCP);
 }
 
 // * private callback
@@ -155,6 +89,67 @@ static void setEngineRelated(void* context, FWPM_SERVICE_STATE serviceState)
 		}
 		FwpmBfeStateUnsubscribeChanges0(subscriptionHandle);
 	}
+}
+
+// * private 
+static NTSTATUS CalloutRegister()
+{
+
+	// https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/fwpsk/ns-fwpsk-fwps_callout0_
+	FWPS_CALLOUT calloutU = {
+		.calloutKey = packetUDP,		// Unique GUID that identifies the callout
+		.flags = 0,					// None
+		.classifyFn = processPacketUDP,		// Callout function used to process network data
+		.notifyFn = CalloutNotify,		// Callout function used to receive notifications from the filter engine, not needed in our case (but needs to be defined)
+		.flowDeleteFn = NULL,// Callout function used to process terminated data, not needed in our case (does't need to be defined)
+	};
+	// https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/fwpsk/nf-fwpsk-fwpscalloutregister0
+	NTSTATUS result = FwpsCalloutRegister(res.filterDeviceObject, &calloutU, &res.calloutIdUDP);
+	if (!NT_SUCCESS(result))
+	{
+		return result;
+	}
+
+	FWPS_CALLOUT calloutT = {
+		.calloutKey = packetTCP,		// Unique GUID that identifies the callout
+		.flags = 0,					// None
+		.classifyFn = processPacketTCP,		// Callout function used to process network data
+		.notifyFn = CalloutNotify,		// Callout function used to receive notifications from the filter engine, not needed in our case (but needs to be defined)
+		.flowDeleteFn = NULL				// Callout function used to process terminated data, not needed in our case (does't need to be defined)
+	};
+	return FwpsCalloutRegister(res.filterDeviceObject, &calloutT, &res.calloutIdTCP);
+}
+
+// * private
+static NTSTATUS CalloutAdd()
+{
+
+	// https://learn.microsoft.com/en-us/windows/win32/api/fwpmtypes/ns-fwpmtypes-fwpm_callout0
+	FWPM_CALLOUT calloutU = {
+		.flags = 0,								 // None
+		.displayData.name = L"udpCall",
+		.displayData.description = L"filterUdp",
+		.calloutKey = packetUDP,					 // Unique GUID that identifies the callout, should be the same as the registered FWPS_CALLOUT GUID
+		.applicableLayer = FWPM_LAYER_DATAGRAM_DATA_V4// https://learn.microsoft.com/en-us/windows/win32/fwp/management-filtering-layer-identifiers-
+	};
+
+	// https://learn.microsoft.com/en-us/windows/win32/api/fwpmu/nf-fwpmu-fwpmcalloutadd0
+	NTSTATUS result = FwpmCalloutAdd(res.hEngine, &calloutU, NULL, &res.calloutIdUDP);
+	if (!NT_SUCCESS(result))
+	{
+		return result;
+	}
+
+	FWPM_CALLOUT calloutT =
+	{
+		.flags = 0,
+		.displayData.name = L"tcpCall",
+		.displayData.description = L"filterTcp",
+		.calloutKey = packetTCP,
+		.applicableLayer = FWPM_LAYER_STREAM_V4
+	};
+
+	return FwpmCalloutAdd(res.hEngine, &calloutT, NULL, &res.calloutIdTCP);
 }
 
 // * private 
@@ -208,6 +203,14 @@ static VOID TermCalloutData() {
 			res.calloutIdUDP = 0;
 		}
 	}
+}
+
+// * public
+VOID WfpCleanup()
+{
+	TermCalloutData();
+	TermWfpEngine();
+	TermFilterDeviceObject();
 }
 
 // * private 

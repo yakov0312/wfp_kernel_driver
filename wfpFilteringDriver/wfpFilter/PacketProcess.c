@@ -79,19 +79,18 @@ void processPacketUDP(
 
 		RtlCopyMemory(udpPayload, &udpPacket[totalHeaderLength], payloadLength);
 
-		for (size_t i = 0; i < payloadLength - context->lengthOfData; i++)
+		for (size_t i = 0; i < payloadLength - context->payloadSize; i++)
 		{
-			if (memcmp(&udpPayload[i], context->payload, context->lengthOfData) == 0)
+			if (memcmp(&udpPayload[i], context->payload, context->payloadSize) == 0)
 			{
-				if (context->changeTo == NULL)
+				classifyOut->actionType = FWP_ACTION_BLOCK;
+				if (context->swap == NULL)
 				{
-					classifyOut->actionType = FWP_ACTION_BLOCK;
 					return;
 				}
 				else
 				{
-					//here create new buffer for the data and change it then calculate the checksum 
-					classifyOut->actionType = FWP_ACTION_CONTINUE;
+					// here create new buffer for the data and change it then calculate the checksum and resend the packet
 					return;
 				}
 			}

@@ -17,7 +17,8 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT driverObject, _In_ PUNICODE_STRING regi
 	driverObject->DriverUnload = UnloadDriver;
 
 	NTSTATUS status = WfpInit(driverObject);
-	if (!(NT_SUCCESS(status))) {
+	if (!(NT_SUCCESS(status)))
+	{
 		KdPrint(("Driver failed to load!\n"));
 		return status;
 	}
